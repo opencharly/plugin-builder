@@ -1,7 +1,5 @@
-version: 2026.232.0520
 plugin-builder:
     candy:
-        version: 2026.176.3202
         description: |-
             The `builder` plugin KIND relocated into a candy: a KIND provider dispatching
             via the pb Invoke(OpLoad) envelope (decode the authored `builder:` entity into
