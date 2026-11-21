@@ -21,7 +21,6 @@
 // name is the node KEY, never a body field — #Builder has no name field.
 #BuilderInput: {
 	detect_file?: [...(string & !="")]
-	detect_config?:    string & !=""
 	requires_src_dir?: bool
 	inline?:           bool
 	cache_mount?: [...#BdCacheMount]
@@ -35,6 +34,9 @@
 	}
 	copy_artifact?: [...#BdCopy]
 	copy_binary?: #BdCopy
+	// There is no detect_config: a manager declaration lives on its candy's distro tag section, and
+	// what a builder produces (aur's packages) is the builder plugin's own declaration, never an
+	// authored field of this node (core #Builder, DESIGN.cue #BuilderAlt; opencharly/sdk#608).
 	path_contribution?: [...(string & !="")]
 	kind:             *"layer" | "bootstrap"
 	privileged:       *false | true

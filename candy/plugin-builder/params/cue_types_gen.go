@@ -26,8 +26,6 @@ package params
 type BuilderInput struct {
 	Detect_file []string `yaml:"detect_file,omitempty" json:"detect_file,omitempty"`
 
-	Detect_config string `yaml:"detect_config,omitempty" json:"detect_config,omitempty"`
-
 	Requires_src_dir bool `yaml:"requires_src_dir,omitempty" json:"requires_src_dir,omitempty"`
 
 	Inline bool `yaml:"inline,omitempty" json:"inline,omitempty"`
@@ -50,6 +48,9 @@ type BuilderInput struct {
 
 	Copy_binary BdCopy `yaml:"copy_binary,omitempty" json:"copy_binary,omitempty"`
 
+	// There is no detect_config: a manager declaration lives on its candy's distro tag section, and
+	// what a builder produces (aur's packages) is the builder plugin's own declaration, never an
+	// authored field of this node (core #Builder, DESIGN.cue #BuilderAlt; opencharly/sdk#608).
 	Path_contribution []string `yaml:"path_contribution,omitempty" json:"path_contribution,omitempty"`
 
 	Kind string `yaml:"kind,omitempty" json:"kind"`
