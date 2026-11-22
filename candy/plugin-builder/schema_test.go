@@ -31,6 +31,14 @@ func TestBuilderInputMatchesCoreBuilder(t *testing.T) {
 	if err := check(`{detect_file: ["package.json"]}`); err != nil {
 		t.Errorf("#BuilderInput rejects a plain builder node: %v", err)
 	}
+	for _, authored := range []string{
+		`{copy_artifact: [{src: "/home/u", dst: "/home/u"}]}`,
+		`{copy_binary: {src: "/usr/local/bin/pixi", dst: "/usr/local/bin/pixi"}}`,
+	} {
+		if err := check(authored); err == nil {
+			t.Errorf("#BuilderInput accepts %s: the payload is the builder plugin's reply, never an authored field", authored)
+		}
+	}
 	if err := check(`{detect_config: "aur"}`); err == nil {
 		t.Error("#BuilderInput still accepts detect_config")
 	}
