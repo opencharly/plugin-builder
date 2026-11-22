@@ -21,7 +21,6 @@
 // name is the node KEY, never a body field — #Builder has no name field.
 #BuilderInput: {
 	detect_file?: [...(string & !="")]
-	detect_config?:    string & !=""
 	requires_src_dir?: bool
 	inline?:           bool
 	cache_mount?: [...#BdCacheMount]
@@ -33,8 +32,11 @@
 	install_command?: {
 		[string]: string
 	}
-	copy_artifact?: [...#BdCopy]
-	copy_binary?: #BdCopy
+	// No copy_artifact or copy_binary: what a builder copies into the target is its own plugin
+	// reply, never an authored field (opencharly/spec#421, opencharly/sdk#608).
+	// There is no detect_config: a manager declaration lives on its candy's distro tag section, and
+	// what a builder produces (aur's packages) is the builder plugin's own declaration, never an
+	// authored field of this node (core #Builder, DESIGN.cue #BuilderAlt; opencharly/sdk#608).
 	path_contribution?: [...(string & !="")]
 	kind:             *"layer" | "bootstrap"
 	privileged:       *false | true
@@ -42,12 +44,6 @@
 	if privileged {
 		output_artifact!: string & =~"^/"
 	}
-}
-
-#BdCopy: {
-	src:    string & !=""
-	dst:    string & !=""
-	chown?: bool
 }
 
 // reproduces #CacheMount (schema/_common.cue) standalone.

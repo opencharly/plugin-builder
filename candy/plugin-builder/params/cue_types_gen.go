@@ -26,8 +26,6 @@ package params
 type BuilderInput struct {
 	Detect_file []string `yaml:"detect_file,omitempty" json:"detect_file,omitempty"`
 
-	Detect_config string `yaml:"detect_config,omitempty" json:"detect_config,omitempty"`
-
 	Requires_src_dir bool `yaml:"requires_src_dir,omitempty" json:"requires_src_dir,omitempty"`
 
 	Inline bool `yaml:"inline,omitempty" json:"inline,omitempty"`
@@ -46,10 +44,11 @@ type BuilderInput struct {
 
 	Install_command map[string]string `yaml:"install_command,omitempty" json:"install_command,omitempty"`
 
-	Copy_artifact []BdCopy `yaml:"copy_artifact,omitempty" json:"copy_artifact,omitempty"`
-
-	Copy_binary BdCopy `yaml:"copy_binary,omitempty" json:"copy_binary,omitempty"`
-
+	// No copy_artifact or copy_binary: what a builder copies into the target is its own plugin
+	// reply, never an authored field (opencharly/spec#421, opencharly/sdk#608).
+	// There is no detect_config: a manager declaration lives on its candy's distro tag section, and
+	// what a builder produces (aur's packages) is the builder plugin's own declaration, never an
+	// authored field of this node (core #Builder, DESIGN.cue #BuilderAlt; opencharly/sdk#608).
 	Path_contribution []string `yaml:"path_contribution,omitempty" json:"path_contribution,omitempty"`
 
 	Kind string `yaml:"kind,omitempty" json:"kind"`
@@ -86,12 +85,4 @@ type BdPhaseTemplates struct {
 	Container string `yaml:"container,omitempty" json:"container,omitempty"`
 
 	Host string `yaml:"host,omitempty" json:"host,omitempty"`
-}
-
-type BdCopy struct {
-	Src string `yaml:"src,omitempty" json:"src"`
-
-	Dst string `yaml:"dst,omitempty" json:"dst"`
-
-	Chown bool `yaml:"chown,omitempty" json:"chown,omitempty"`
 }
