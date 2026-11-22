@@ -44,6 +44,8 @@ type BuilderInput struct {
 
 	Install_command map[string]string `yaml:"install_command,omitempty" json:"install_command,omitempty"`
 
+	// No copy_artifact or copy_binary: what a builder copies into the target is its own plugin
+	// reply, never an authored field (opencharly/spec#421, opencharly/sdk#608).
 	// There is no detect_config: a manager declaration lives on its candy's distro tag section, and
 	// what a builder produces (aur's packages) is the builder plugin's own declaration, never an
 	// authored field of this node (core #Builder, DESIGN.cue #BuilderAlt; opencharly/sdk#608).
