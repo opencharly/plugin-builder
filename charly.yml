@@ -11,3 +11,40 @@
 discover:
     - path: candy
       recursive: true
+
+# -----------------------------------------------------------------------------
+# cue-gen — regenerate params/cue_types_gen.go from schema/builder.cue.
+#
+# The generator is spec's ONE pipeline, run BY REF
+# (`go run github.com/opencharly/spec/schemagen@<merged tag>`), so this repo carries
+# no script and no copy of the pipeline (opencharly/plugin-builder#10). The module-root
+# command exists for exactly this: a consumer's generator task runs the same code
+# `charly task cue-gen` runs in spec. The tag is a MERGED release, never a branch.
+# -----------------------------------------------------------------------------
+cue-gen:
+  task:
+    description: Regenerate params/cue_types_gen.go from schema/builder.cue with spec's generator, by ref
+    dir: .
+    plan:
+      - run: regenerate the Go param structs in-process from this plugin's own schema
+        command: |
+          set -euo pipefail
+          GOWORK=off go run github.com/opencharly/spec/schemagen@v0.2026327.329 \
+            -mode=params -schema=candy/plugin-builder/schema -pkg=params \
+            -out=candy/plugin-builder/params/cue_types_gen.go
+          gofmt -w candy/plugin-builder/params/cue_types_gen.go
+          echo "cue-gen: regenerated candy/plugin-builder/params/cue_types_gen.go"
+        context: [deploy]
+      - check: the committed file is in step — regeneration leaves no diff (the drift gate)
+        command: |
+          set -euo pipefail
+          if git diff --quiet -- candy/plugin-builder/params/cue_types_gen.go; then
+            echo CUE-GEN-IN-STEP
+          else
+            echo "FAIL: the committed params/cue_types_gen.go was STALE — the regenerated file is in the worktree; commit it"
+            git diff -- candy/plugin-builder/params/cue_types_gen.go | head -40
+            exit 1
+          fi
+        stdout:
+          - contains: CUE-GEN-IN-STEP
+        context: [deploy]
